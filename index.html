@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NIRAI - Tic Tac Toe</title>
+<meta name="description" content="Play NIRAI Tic Tac Toe with friends or challenge the computer.">
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#fff1f4,#ffd6df);
+    color:#641c2b;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+/* SPLASH SCREEN */
+
+#splash{
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    background:linear-gradient(135deg,#fff,#ffe1e8);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    transition:opacity .6s,visibility .6s;
+}
+
+#splash.hide{
+    opacity:0;
+    visibility:hidden;
+}
+
+.splashBox{
+    text-align:center;
+    animation:zoom .8s ease;
+}
+
+.splashLogo{
+    width:330px;
+    max-width:80vw;
+    height:330px;
+    object-fit:contain;
+    filter:drop-shadow(0 10px 20px rgba(100,20,40,.18));
+}
+
+.splashText{
+    font-size:32px;
+    font-weight:900;
+    color:#e63950;
+    letter-spacing:3px;
+    margin-top:-20px;
+}
+
+.splashSub{
+    margin-top:8px;
+    color:#a34e61;
+    font-weight:bold;
+}
+
+.loader{
+    margin:20px auto;
+    width:45px;
+    height:45px;
+    border:5px solid #ffd0da;
+    border-top:5px solid #e63950;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg);}
+}
+
+@keyframes zoom{
+    from{
+        opacity:0;
+        transform:scale(.7);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+/* MAIN */
+
+.container{
+    width:100%;
+    max-width:520px;
+}
+
+.card{
+    background:rgba(255,250,251,.96);
+    border:2px solid #ffc1ce;
+    border-radius:30px;
+    padding:25px;
+    box-shadow:0 20px 60px rgba(180,40,70,.18);
+}
+
+.logo{
+    width:120px;
+    height:120px;
+    object-fit:contain;
+    display:block;
+    margin:auto;
+}
+
+.brand{
+    text-align:center;
+}
+
+.brand h1{
+    font-size:36px;
+    color:#e63950;
+    letter-spacing:3px;
+    margin-top:-8px;
+}
+
+.brand p{
+    color:#a65366;
+    font-size:14px;
+    font-weight:bold;
+    margin:5px 0 20px;
+}
+
+/* SCREENS */
+
+.screen{
+    display:none;
+}
+
+.screen.active{
+    display:block;
+}
+
+h2{
+    text-align:center;
+    margin-bottom:18px;
+}
+
+/* BUTTONS */
+
+button{
+    font-family:inherit;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.menu button,
+.startBtn,
+.controlBtn{
+    width:100%;
+    padding:14px;
+    border-radius:15px;
+    border:none;
+    margin:6px 0;
+    font-size:15px;
+    transition:.2s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+}
+
+.primary{
+    background:#e63950;
+    color:white;
+    box-shadow:0 6px 15px rgba(230,57,80,.25);
+}
+
+.secondary{
+    background:#fff6f8;
+    color:#641c2b;
+    border:2px solid #ffc1ce !important;
+}
+
+/* SETUP */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+
+.back{
+    border:none;
+    background:none;
+    color:#a65366;
+    font-weight:bold;
+}
+
+.field{
+    margin:12px 0;
+}
+
+.field label{
+    display:block;
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border:2px solid #ffc1ce;
+    border-radius:13px;
+    background:#fff8f9;
+    color:#641c2b;
+    outline:none;
+}
+
+input:focus{
+    border-color:#e63950;
+}
+
+.grid2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+.choice{
+    padding:12px;
+    border-radius:13px;
+    border:2px solid #ffc1ce;
+    background:#fff7f8;
+    color:#641c2b;
+}
+
+.choice.active{
+    background:#e63950;
+    color:white;
+    border-color:#e63950;
+}
+
+/* GAME */
+
+.score{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:7px;
+    margin:12px 0;
+}
+
+.scoreBox{
+    background:#fff5f7;
+    border:2px solid #ffc1ce;
+    border-radius:14px;
+    padding:9px;
+    text-align:center;
+}
+
+.scoreBox span{
+    display:block;
+    font-size:11px;
+    color:#a65366;
+    font-weight:bold;
+}
+
+.scoreBox b{
+    font-size:22px;
+}
+
+.status{
+    text-align:center;
+    font-weight:bold;
+    min-height:25px;
+    margin:8px;
+}
+
+.board{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin:15px 0;
+}
+
+.cell{
+    aspect-ratio:1;
+    background:#fff7f8;
+    border:2px solid #ffc1ce;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:55px;
+    font-weight:900;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.cell:hover{
+    background:#ffe8ed;
+    transform:scale(1.03);
+}
+
+.cell.x{
+    color:#e63950;
+}
+
+.cell.o{
+    color:#ff8295;
+}
+
+.cell.win{
+    background:#ffd1db;
+    border-color:#e63950;
+    animation:winning .5s infinite alternate;
+}
+
+@keyframes winning{
+    to{
+        transform:scale(1.06);
+    }
+}
+
+.controls{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+}
+
+.controls button{
+    padding:13px;
+    border-radius:14px;
+}
+
+/* RESULT POPUP */
+
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(70,10,25,.45);
+    backdrop-filter:blur(5px);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:500;
+    padding:20px;
+}
+
+.overlay.show{
+    display:flex;
+}
+
+.result{
+    width:min(390px,92vw);
+    background:white;
+    border:2px solid #ffc1ce;
+    border-radius:30px;
+    padding:30px 22px;
+    text-align:center;
+    animation:pop .4s ease;
+    box-shadow:0 25px 70px rgba(70,10,25,.25);
+}
+
+.resultIcon{
+    font-size:65px;
+}
+
+.result h2{
+    font-size:30px;
+    color:#e63950;
+    margin:10px 0 5px;
+}
+
+.result p{
+    color:#a65366;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.resultButtons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.resultButtons button{
+    padding:13px;
+    border-radius:14px;
+    border:none;
+}
+
+@keyframes pop{
+    from{
+        opacity:0;
+        transform:scale(.75);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+/* CONFETTI */
+
+#confetti{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:600;
+}
+
+.confetti{
+    position:absolute;
+    top:-30px;
+    font-size:25px;
+    animation:fall 1.7s linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(110vh) rotate(720deg);
+        opacity:0;
+    }
+}
+
+/* STATS */
+
+.stats{
+    background:#fff5f7;
+    border:2px solid #ffc1ce;
+    border-radius:16px;
+    padding:15px;
+}
+
+.stat{
+    display:flex;
+    justify-content:space-between;
+    margin:10px 0;
+}
+
+.help p{
+    color:#925264;
+    line-height:1.6;
+    margin:10px 0;
+}
+
+.footer{
+    text-align:center;
+    color:#a65366;
+    font-size:11px;
+    margin-top:18px;
+}
+
+/* MOBILE */
+
+@media(max-width:430px){
+
+    body{
+        padding:10px;
+    }
+
+    .card{
+        padding:18px;
+        border-radius:24px;
+    }
+
+    .logo{
+        width:95px;
+        height:95px;
+    }
+
+    .cell{
+        font-size:45px;
+        border-radius:17px;
+    }
+
+    .splashLogo{
+        width:280px;
+        height:280px;
+    }
+
+    .splashText{
+        font-size:26px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH SCREEN -->
+
+<div id="splash">
+
+    <div class="splashBox">
+
+        <img
+            src="nirai_logo.png"
+            class="splashLogo"
+            alt="NIRAI Tic Tac Toe">
+
+        <div class="splashText">NIRAI</div>
+
+        <div class="splashSub">
+            Tic Tac Toe • Play • Think • Win
+        </div>
+
+        <div class="loader"></div>
+
+    </div>
+
+</div>
+
+
+<!-- CONFETTI -->
+
+<div id="confetti"></div>
+
+
+<!-- RESULT POPUP -->
+
+<div class="overlay" id="resultOverlay">
+
+    <div class="result">
+
+        <div class="resultIcon" id="resultIcon">🏆</div>
+
+        <h2 id="resultTitle">
+            YOU WIN!
+        </h2>
+
+        <p id="resultMessage">
+            Amazing move!
+        </p>
+
+        <div class="resultButtons">
+
+            <button
+                class="secondary"
+                onclick="endGame()">
+                END
+            </button>
+
+            <button
+                class="primary"
+                onclick="newGame()">
+                NEW GAME
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MAIN -->
+
+<div class="container">
+
+<div class="card">
+
+    <!-- BRAND -->
+
+    <div class="brand">
+
+        <img
+            src="nirai_logo.png"
+            class="logo"
+            alt="NIRAI Logo">
+
+        <h1>NIRAI</h1>
+
+        <p>
+            Play • Think • Win
+        </p>
+
+    </div>
+
+
+    <!-- HOME -->
+
+    <section
+        id="home"
+        class="screen active">
+
+        <h2>
+            🎮 Tic Tac Toe
+        </h2>
+
+        <div class="menu">
+
+            <button
+                class="primary"
+                onclick="openSetup('pvp')">
+                👥 TWO PLAYER
+            </button>
+
+            <button
+                class="primary"
+                onclick="openSetup('cpu')">
+                🤖 VS COMPUTER
+            </button>
+
+            <button
+                class="secondary"
+                onclick="showScreen('stats')">
+                🏆 MY STATISTICS
+            </button>
+
+            <button
+                class="secondary"
+                onclick="showScreen('help')">
+                📖 HOW TO PLAY
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- SETUP -->
+
+    <section
+        id="setup"
+        class="screen">
+
+        <div class="topbar">
+
+            <button
+                class="back"
+                onclick="showScreen('home')">
+                ← HOME
+            </button>
+
+            <b id="setupTitle">
+                Game Setup
+            </b>
+
+        </div>
+
+
+        <div class="field">
+
+            <label>
+                Player X / Your Name
+            </label>
+
+            <input
+                id="p1"
+                maxlength="16"
+                placeholder="Enter your name">
+
+        </div>
+
+
+        <div
+            class="field"
+            id="p2Field">
+
+            <label>
+                Player O Name
+            </label>
+
+            <input
+                id="p2"
+                maxlength="16"
+                placeholder="Player 2">
+
+        </div>
+
+
+        <!-- COMPUTER OPTIONS -->
+
+        <div id="cpuOptions">
+
+            <label>
+                Difficulty
+            </label>
+
+            <div
+                class="grid2"
+                style="margin:8px 0 15px">
+
+                <button
+                    class="choice active"
+                    data-diff="easy">
+                    EASY
+                </button>
+
+                <button
+                    class="choice"
+                    data-diff="medium">
+                    MEDIUM
+                </button>
+
+                <button
+                    class="choice"
+                    data-diff="hard">
+                    HARD
+                </button>
+
+                <button
+                    class="choice"
+                    data-diff="impossible">
+                    IMPOSSIBLE
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <label>
+            Choose Your Symbol
+        </label>
+
+        <div
+            class="grid2"
+            style="margin:8px 0 15px">
+
+            <button
+                class="choice active"
+                data-symbol="X">
+                ❌ X
+            </button>
+
+            <button
+                class="choice"
+                data-symbol="O">
+                ⭕ O
+            </button>
+
+        </div>
+
+
+        <button
+            class="startBtn primary"
+            onclick="startGame()">
+
+            🚀 START GAME
+
+        </button>
+
+    </section>
+
+
+    <!-- GAME -->
+
+    <section
+        id="game"
+        class="screen">
+
+        <div class="topbar">
+
+            <button
+                class="back"
+                onclick="endGame()">
+                ← END GAME
+            </button>
+
+            <b id="gameMode"></b>
+
+        </div>
+
+
+        <div class="score">
+
+            <div class="scoreBox">
+
+                <span id="xName">
+                    X
+                </span>
+
+                <b id="xScore">
+                    0
+                </b>
+
+            </div>
+
+
+            <div class="scoreBox">
+
+                <span>
+                    DRAW
+                </span>
+
+                <b id="drawScore">
+                    0
+                </b>
+
+            </div>
+
+
+            <div class="scoreBox">
+
+                <span id="oName">
+                    O
+                </span>
+
+                <b id="oScore">
+                    0
+                </b>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="status"
+            id="status">
+        </div>
+
+
+        <div
+            class="board"
+            id="board">
+        </div>
+
+
+        <div class="controls">
+
+            <button
+                class="secondary"
+                onclick="newRound()">
+                🔄 NEW ROUND
+            </button>
+
+            <button
+                class="primary"
+                onclick="endGame()">
+                🏠 END GAME
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- STATISTICS -->
+
+    <section
+        id="stats"
+        class="screen">
+
+        <div class="topbar">
+
+            <button
+                class="back"
+                onclick="showScreen('home')">
+                ← HOME
+            </button>
+
+            <b>
+                Statistics
+            </b>
+
+        </div>
+
+        <h2>
+            🏆 Your NIRAI Stats
+        </h2>
+
+        <div class="stats">
+
+            <div class="stat">
+                <span>Games Played</span>
+                <b id="gamesStat">0</b>
+            </div>
+
+            <div class="stat">
+                <span>Wins</span>
+                <b id="winsStat">0</b>
+            </div>
+
+            <div class="stat">
+                <span>Losses</span>
+                <b id="lossesStat">0</b>
+            </div>
+
+            <div class="stat">
+                <span>Draws</span>
+                <b id="drawsStat">0</b>
+            </div>
+
+        </div>
+
+        <button
+            class="controlBtn secondary"
+            onclick="clearStats()">
+
+            CLEAR STATISTICS
+
+        </button>
+
+    </section>
+
+
+    <!-- HELP -->
+
+    <section
+        id="help"
+        class="screen help">
+
+        <div class="topbar">
+
+            <button
+                class="back"
+                onclick="showScreen('home')">
+                ← HOME
+            </button>
+
+            <b>
+                How To Play
+            </b>
+
+        </div>
+
+        <h2>
+            📖 How to Play
+        </h2>
+
+        <p>
+            1️⃣ Choose <b>Two Player</b> or
+            <b>Vs Computer</b>.
+        </p>
+
+        <p>
+            2️⃣ Enter your name and choose
+            X or O.
+        </p>
+
+        <p>
+            3️⃣ Tap an empty square to place
+            your symbol.
+        </p>
+
+        <p>
+            4️⃣ Get three symbols in a row
+            horizontally, vertically or diagonally.
+        </p>
+
+        <p>
+            5️⃣ After winning, choose
+            <b>NEW GAME</b> to play again or
+            <b>END</b> to return home.
+        </p>
+
+    </section>
+
+
+    <div class="footer">
+        © 2026 NIRAI • Tic Tac Toe
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const $ = id => document.getElementById(id);
+
+
+/* VARIABLES */
+
+let mode = "pvp";
+
+let difficulty = "easy";
+
+let human = "X";
+
+let current = "X";
+
+let board = [];
+
+let over = false;
+
+let names = {
+    X:"Player X",
+    O:"Player O"
+};
+
+let score = {
+    X:0,
+    O:0,
+    D:0
+};
+
+
+/* WINNING COMBINATIONS */
+
+const wins = [
+
+    [0,1,2],
+    [3,4,5],
+    [6,7,8],
+
+    [0,3,6],
+    [1,4,7],
+    [2,5,8],
+
+    [0,4,8],
+    [2,4,6]
+
+];
+
+
+/* SPLASH */
+
+window.addEventListener("load",function(){
+
+    setTimeout(function(){
+
+        document
+            .getElementById("splash")
+            .classList.add("hide");
+
+    },2500);
+
+});
+
+
+/* SCREEN */
+
+function showScreen(id){
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(function(screen){
+
+            screen.classList.remove("active");
+
+        });
+
+    document
+        .getElementById(id)
+        .classList.add("active");
+
+    if(id === "stats"){
+
+        updateStats();
+
+    }
+
+}
+
+
+/* OPEN SETUP */
+
+function openSetup(gameMode){
+
+    mode = gameMode;
+
+    document
+        .getElementById("setupTitle")
+        .textContent =
+        mode === "cpu"
+        ? "Vs Computer Setup"
+        : "Two Player Setup";
+
+
+    document
+        .getElementById("p2Field")
+        .style.display =
+        mode === "cpu"
+        ? "none"
+        : "block";
+
+
+    document
+        .getElementById("cpuOptions")
+        .style.display =
+        mode === "cpu"
+        ? "block"
+        : "none";
+
+
+    document.getElementById("p1").value = "";
+
+    document.getElementById("p2").value = "";
+
+    showScreen("setup");
+
+}
+
+
+/* DIFFICULTY */
+
+document
+.querySelectorAll("[data-diff]")
+.forEach(function(button){
+
+    button.onclick = function(){
+
+        difficulty = button.dataset.diff;
+
+        document
+        .querySelectorAll("[data-diff]")
+        .forEach(function(b){
+
+            b.classList.remove("active");
+
+        });
+
+        button.classList.add("active");
+
+    };
+
+});
+
+
+/* SYMBOL */
+
+document
+.querySelectorAll("[data-symbol]")
+.forEach(function(button){
+
+    button.onclick = function(){
+
+        human = button.dataset.symbol;
+
+        document
+        .querySelectorAll("[data-symbol]")
+        .forEach(function(b){
+
+            b.classList.remove("active");
+
+        });
+
+        button.classList.add("active");
+
+    };
+
+});
+
+
+/* START GAME */
+
+function startGame(){
+
+    names.X =
+        document.getElementById("p1")
+        .value.trim()
+        || "Player X";
+
+
+    names.O =
+        mode === "cpu"
+        ? "Computer"
+        :
+        document.getElementById("p2")
+        .value.trim()
+        || "Player O";
+
+
+    score = {
+        X:0,
+        O:0,
+        D:0
+    };
+
+
+    document
+        .getElementById("gameMode")
+        .textContent =
+        mode === "cpu"
+        ? "🤖 VS COMPUTER"
+        : "👥 TWO PLAYER";
+
+
+    showScreen("game");
+
+    newRound();
+
+}
+
+
+/* NEW ROUND */
+
+function newRound(){
+
+    board = Array(9).fill("");
+
+    current = "X";
+
+    over = false;
+
+    render();
+
+
+    if(mode === "cpu" && human === "O"){
+
+        document
+            .getElementById("status")
+            .textContent =
+            "Computer is thinking...";
+
+        setTimeout(cpuMove,500);
+
+    }
+
+}
+
+
+/* NEW GAME FROM POPUP */
+
+function newGame(){
+
+    document
+        .getElementById("resultOverlay")
+        .classList.remove("show");
+
+    newRound();
+
+}
+
+
+/* END GAME */
+
+function endGame(){
+
+    document
+        .getElementById("resultOverlay")
+        .classList.remove("show");
+
+    showScreen("home");
+
+}
+
+
+/* RENDER */
+
+function render(){
+
+    document.getElementById("xName").textContent =
+        names.X;
+
+    document.getElementById("oName").textContent =
+        names.O;
+
+    document.getElementById("xScore").textContent =
+        score.X;
+
+    document.getElementById("oScore").textContent =
+        score.O;
+
+    document.getElementById("drawScore").textContent =
+        score.D;
+
+
+    if(!over){
+
+        document.getElementById("status")
+            .textContent =
+            names[current] + "'s turn";
+
+    }
+
+
+    const boardElement =
+        document.getElementById("board");
+
+    boardElement.innerHTML = "";
+
+
+    board.forEach(function(value,index){
+
+        const cell =
+            document.createElement("div");
+
+        cell.className =
+            "cell " +
+            (
+                value === "X"
+                ? "x"
+                : value === "O"
+                ? "o"
+                : ""
+            );
+
+
+        cell.textContent = value;
+
+
+        cell.onclick = function(){
+
+            move(index);
+
+        };
+
+
+        boardElement.appendChild(cell);
+
+    });
+
+}
+
+
+/* PLAYER MOVE */
+
+function move(index){
+
+    if(
+        over ||
+        board[index] ||
+        (
+            mode === "cpu" &&
+            current !== human
+        )
+    ){
+
+        return;
+
+    }
+
+
+    board[index] = current;
+
+    finishOrNext();
+
+}
+
+
+/* CHECK GAME */
+
+function finishOrNext(){
+
+    const gameResult =
+        checkResult(board);
+
+
+    if(gameResult){
+
+        finish(gameResult);
+
+        return;
+
+    }
+
+
+    current =
+        current === "X"
+        ? "O"
+        : "X";
+
+
+    render();
+
+
+    if(
+        mode === "cpu" &&
+        current !== human
+    ){
+
+        document.getElementById("status")
+            .textContent =
+            "Computer is thinking...";
+
+        setTimeout(cpuMove,350);
+
+    }
+
+}
+
+
+/* RESULT */
+
+function checkResult(b){
+
+    for(const line of wins){
+
+        const a = line[0];
+
+        const c = line[1];
+
+        const d = line[2];
+
+
+        if(
+            b[a] &&
+            b[a] === b[c] &&
+            b[a] === b[d]
+        ){
+
+            return {
+                winner:b[a],
+                line:line
+            };
+
+        }
+
+    }
+
+
+    if(b.every(Boolean)){
+
+        return {
+            winner:"D",
+            line:[]
+        };
+
+    }
+
+
+    return null;
+
+}
+
+
+/* FINISH */
+
+function finish(result){
+
+    over = true;
+
+
+    if(result.winner === "D"){
+
+        score.D++;
+
+        saveStats("D");
+
+        document.getElementById("status")
+            .textContent =
+            "It's a draw! 🤝";
+
+
+        render();
+
+
+        document.getElementById("resultIcon")
+            .textContent = "🤝";
+
+
+        document.getElementById("resultTitle")
+            .textContent =
+            "IT'S A DRAW!";
+
+
+        document.getElementById("resultMessage")
+            .textContent =
+            "Good game! Try another round.";
+
+
+        setTimeout(function(){
+
+            document
+                .getElementById("resultOverlay")
+                .classList.add("show");
+
+        },300);
+
+
+        return;
+
+    }
+
+
+    score[result.winner]++;
+
+
+    render();
+
+
+    result.line.forEach(function(index){
+
+        document
+            .getElementById("board")
+            .children[index]
+            .classList.add("win");
+
+    });
+
+
+    const winner =
+        names[result.winner];
+
+
+    if(
+        mode === "cpu" &&
+        result.winner === human
+    ){
+
+        saveStats("W");
+
+        document.getElementById("resultIcon")
+            .textContent = "🏆";
+
+
+        document.getElementById("resultTitle")
+            .textContent =
+            winner + ", YOU WIN!";
+
+
+        document.getElementById("resultMessage")
+            .textContent =
+            "Amazing move! 🎉";
+
+    }
+
+    else if(mode === "cpu"){
+
+        saveStats("L");
+
+        document.getElementById("resultIcon")
+            .textContent = "🤖";
+
+
+        document.getElementById("resultTitle")
+            .textContent =
+            "COMPUTER WINS!";
+
+
+        document.getElementById("resultMessage")
+            .textContent =
+            "Try again and beat the computer!";
+
+    }
+
+    else{
+
+        document.getElementById("resultIcon")
+            .textContent = "🏆";
+
+
+        document.getElementById("resultTitle")
+            .textContent =
+            winner + ", YOU WIN!";
+
+
+        document.getElementById("resultMessage")
+            .textContent =
+            "Congratulations! 🎉";
+
+    }
+
+
+    createConfetti();
+
+
+    setTimeout(function(){
+
+        document
+            .getElementById("resultOverlay")
+            .classList.add("show");
+
+    },450);
+
+}
+
+
+/* COMPUTER */
+
+function cpuMove(){
+
+    if(over || current === human){
+
+        return;
+
+    }
+
+
+    let moveIndex;
+
+
+    if(difficulty === "easy"){
+
+        moveIndex = randomMove();
+
+    }
+
+    else if(difficulty === "medium"){
+
+        moveIndex =
+            findWin("O") ??
+            findWin("X") ??
+            randomMove();
+
+    }
+
+    else{
+
+        moveIndex = bestMove();
+
+    }
+
+
+    if(moveIndex >= 0){
+
+        board[moveIndex] = "O";
+
+        finishOrNext();
+
+    }
+
+}
+
+
+/* FIND WINNING MOVE */
+
+function findWin(player){
+
+    for(const line of wins){
+
+        const values =
+            line.map(index => board[index]);
+
+
+        if(
+            values.filter(v => v === player).length === 2 &&
+            values.includes("")
+        ){
+
+            return line[
+                values.indexOf("")
+            ];
+
+        }
+
+    }
+
+    return null;
+
+}
+
+
+/* RANDOM */
+
+function randomMove(){
+
+    const empty =
+        board
+        .map((value,index) =>
+            value ? null : index
+        )
+        .filter(index => index !== null);
+
+
+    if(!empty.length){
+
+        return -1;
+
+    }
+
+
+    return empty[
+        Math.floor(
+            Math.random() * empty.length
+        )
+    ];
+
+}
+
+
+/* IMPOSSIBLE */
+
+function bestMove(){
+
+    let best = -Infinity;
+
+    let bestIndex = -1;
+
+
+    for(let i=0;i<9;i++){
+
+        if(!board[i]){
+
+            board[i] = "O";
+
+            const score =
+                minimax(false);
+
+            board[i] = "";
+
+
+            if(score > best){
+
+                best = score;
+
+                bestIndex = i;
+
+            }
+
+        }
+
+    }
+
+
+    return bestIndex;
+
+}
+
+
+/* MINIMAX */
+
+function minimax(maximizing){
+
+    const result =
+        checkResult(board);
+
+
+    if(result){
+
+        if(result.winner === "O"){
+
+            return 10;
+
+        }
+
+        if(result.winner === "X"){
+
+            return -10;
+
+        }
+
+        return 0;
+
+    }
+
+
+    if(maximizing){
+
+        let best = -Infinity;
+
+
+        for(let i=0;i<9;i++){
+
+            if(!board[i]){
+
+                board[i] = "O";
+
+                best =
+                    Math.max(
+                        best,
+                        minimax(false)
+                    );
+
+                board[i] = "";
+
+            }
+
+        }
+
+
+        return best;
+
+    }
+
+    else{
+
+        let best = Infinity;
+
+
+        for(let i=0;i<9;i++){
+
+            if(!board[i]){
+
+                board[i] = "X";
+
+                best =
+                    Math.min(
+                        best,
+                        minimax(true)
+                    );
+
+                board[i] = "";
+
+            }
+
+        }
+
+
+        return best;
+
+    }
+
+}
+
+
+/* CONFETTI */
+
+function createConfetti(){
+
+    const container =
+        document.getElementById("confetti");
+
+    container.innerHTML = "";
+
+
+    const emojis = [
+        "🎉",
+        "✨",
+        "⭐",
+        "💗",
+        "🎊"
+    ];
+
+
+    for(let i=0;i<45;i++){
+
+        const item =
+            document.createElement("span");
+
+
+        item.className = "confetti";
+
+
+        item.textContent =
+            emojis[
+                i % emojis.length
+            ];
+
+
+        item.style.left =
+            Math.random() * 100 + "%";
+
+
+        item.style.animationDelay =
+            Math.random() * .5 + "s";
+
+
+        container.appendChild(item);
+
+    }
+
+
+    setTimeout(function(){
+
+        container.innerHTML = "";
+
+    },2000);
+
+}
+
+
+/* STATISTICS */
+
+function getStats(){
+
+    return JSON.parse(
+        localStorage.getItem("niraiStats")
+        ||
+        '{"games":0,"wins":0,"losses":0,"draws":0}'
+    );
+
+}
+
+
+function saveStats(type){
+
+    const stats = getStats();
+
+
+    stats.games++;
+
+
+    if(type === "W"){
+
+        stats.wins++;
+
+    }
+
+    else if(type === "L"){
+
+        stats.losses++;
+
+    }
+
+    else{
+
+        stats.draws++;
+
+    }
+
+
+    localStorage.setItem(
+        "niraiStats",
+        JSON.stringify(stats)
+    );
+
+}
+
+
+function updateStats(){
+
+    const stats = getStats();
+
+
+    document.getElementById("gamesStat")
+        .textContent = stats.games;
+
+
+    document.getElementById("winsStat")
+        .textContent = stats.wins;
+
+
+    document.getElementById("lossesStat")
+        .textContent = stats.losses;
+
+
+    document.getElementById("drawsStat")
+        .textContent = stats.draws;
+
+}
+
+
+function clearStats(){
+
+    localStorage.removeItem("niraiStats");
+
+    updateStats();
+
+}
+
+</script>
+
+</body>
+</html>

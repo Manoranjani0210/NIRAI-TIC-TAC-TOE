@@ -2,48 +2,163 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Tic Tac Toe</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <!-- CSS will be added in Step 2 -->
+    <meta name="description"
+          content="NIRAI Tic Tac Toe - Play Tic Tac Toe against the computer with different difficulty levels.">
+
+    <meta name="keywords"
+          content="NIRAI, Tic Tac Toe, Tic Tac Toe game, play Tic Tac Toe">
+
+    <meta name="author"
+          content="NIRAI">
+
+    <title>NIRAI | Tic Tac Toe</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <!-- Main Container -->
-    <div class="game-container">
+    <!-- Background decorations -->
+    <div class="glow glow-one"></div>
+    <div class="glow glow-two"></div>
 
-        <!-- Game Title -->
-        <h1>Tic Tac Toe</h1>
+    <main class="game-wrapper">
 
-        <!-- Player Turn -->
-        <p id="status">Player X's Turn</p>
+        <!-- HEADER -->
+        <header class="header">
 
-        <!-- Game Board -->
-        <div class="board">
+            <img src="logo.png"
+                 alt="NIRAI Tic Tac Toe Logo"
+                 class="logo">
 
-            <button class="cell" data-index="0"></button>
-            <button class="cell" data-index="1"></button>
-            <button class="cell" data-index="2"></button>
+            <div>
+                <h1>NIRAI</h1>
+                <p>TIC TAC TOE</p>
+            </div>
 
-            <button class="cell" data-index="3"></button>
-            <button class="cell" data-index="4"></button>
-            <button class="cell" data-index="5"></button>
+        </header>
 
-            <button class="cell" data-index="6"></button>
-            <button class="cell" data-index="7"></button>
-            <button class="cell" data-index="8"></button>
+
+        <!-- GAME CARD -->
+        <section class="game-card">
+
+            <div class="top-section">
+
+                <div>
+                    <h2>Play Tic Tac Toe</h2>
+                    <p id="status">Your Turn — X</p>
+                </div>
+
+                <div class="difficulty-box">
+
+                    <label for="difficulty">
+                        Difficulty
+                    </label>
+
+                    <select id="difficulty">
+                        <option value="easy">Easy</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- SCOREBOARD -->
+            <div class="scoreboard">
+
+                <div class="score-box player-score">
+                    <span>YOU</span>
+                    <strong id="playerScore">0</strong>
+                </div>
+
+                <div class="score-box draw-score">
+                    <span>DRAWS</span>
+                    <strong id="drawScore">0</strong>
+                </div>
+
+                <div class="score-box computer-score">
+                    <span>COMPUTER</span>
+                    <strong id="computerScore">0</strong>
+                </div>
+
+            </div>
+
+
+            <!-- BOARD -->
+            <div class="board">
+
+                <button class="cell" data-index="0"></button>
+                <button class="cell" data-index="1"></button>
+                <button class="cell" data-index="2"></button>
+
+                <button class="cell" data-index="3"></button>
+                <button class="cell" data-index="4"></button>
+                <button class="cell" data-index="5"></button>
+
+                <button class="cell" data-index="6"></button>
+                <button class="cell" data-index="7"></button>
+                <button class="cell" data-index="8"></button>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+            <div class="buttons">
+
+                <button id="restartBtn" class="restart-btn">
+                    ↻ Restart Game
+                </button>
+
+                <button id="resetScoreBtn" class="reset-score-btn">
+                    Reset Score
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+        <footer>
+            <p>Made with ❤️ by <strong>NIRAI</strong></p>
+        </footer>
+
+    </main>
+
+
+    <!-- WIN MODAL -->
+    <div id="winModal" class="modal">
+
+        <div class="modal-content">
+
+            <div id="resultIcon" class="result-icon">
+                🏆
+            </div>
+
+            <h2 id="resultTitle">
+                You Win!
+            </h2>
+
+            <p id="resultMessage">
+                Great move!
+            </p>
+
+            <button id="playAgainBtn">
+                Play Again
+            </button>
 
         </div>
 
-        <!-- Restart Button -->
-        <button id="restartBtn">Restart Game</button>
-
     </div>
 
-    <!-- JavaScript will be added later -->
+
     <script src="script.js"></script>
 
 </body>

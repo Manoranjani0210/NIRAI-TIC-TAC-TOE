@@ -1,0 +1,128 @@
+```css
+/* Remove default browser spacing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Whole page */
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: Arial, sans-serif;
+
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+/* Main game container */
+.game-container {
+    width: 350px;
+    padding: 30px;
+
+    text-align: center;
+
+    background: white;
+    border-radius: 20px;
+
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Game title */
+h1 {
+    margin-bottom: 10px;
+
+    font-size: 36px;
+    color: #333;
+}
+
+/* Player status */
+#status {
+    margin-bottom: 25px;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    color: #667eea;
+}
+
+/* Tic Tac Toe board */
+.board {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+
+    gap: 10px;
+
+    width: 100%;
+    aspect-ratio: 1 / 1;
+
+    margin-bottom: 25px;
+}
+
+/* Individual cells */
+.cell {
+    border: none;
+    border-radius: 12px;
+
+    background: #f1f3f6;
+
+    font-size: 40px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+/* Cell hover effect */
+.cell:hover {
+    background: #e2e5eb;
+    transform: scale(1.03);
+}
+
+/* Restart button */
+#restartBtn {
+    padding: 12px 25px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #667eea;
+    color: white;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+/* Restart button hover */
+#restartBtn:hover {
+    background: #5568d8;
+    transform: scale(1.05);
+}
+
+/* Mobile screen */
+@media (max-width: 400px) {
+
+    .game-container {
+        width: 90%;
+        padding: 25px;
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+
+    .cell {
+        font-size: 32px;
+    }
+}
+```
